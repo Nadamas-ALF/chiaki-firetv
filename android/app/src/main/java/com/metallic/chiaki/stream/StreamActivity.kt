@@ -39,7 +39,7 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 	companion object
 	{
 		const val EXTRA_CONNECT_INFO = "connect_info"
-		private const val HIDE_UI_TIMEOUT_MS = 2000L
+		private const val HIDE_UI_TIMEOUT_MS = 5000L
 	}
 
 	private lateinit var viewModel: StreamViewModel
@@ -136,6 +136,7 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 	{
 		super.onResume()
 		hideSystemUI()
+		showOverlay()
 		viewModel.session.resume()
 	}
 
@@ -157,13 +158,12 @@ class StreamActivity : AppCompatActivity(), View.OnSystemUiVisibilityChangeListe
 		viewModel.session.resume()
 	}
 
-	private val hideSystemUIRunnable = Runnable { hideSystemUI() }
+	private val hideSystemUIRunnable = Runnable { hideSystemUI(); hideOverlay() }
 
 	override fun onSystemUiVisibilityChange(visibility: Int)
 	{
-		if(visibility and View.SYSTEM_UI_FLAG_FULLSCREEN == 0)
-			showOverlay()
-		else
+		// Fire TV: el aviso del sistema ya no vuelve a mostrar la banda
+		if(visibility and View.SYSTEM_UI_FLAG_FULLSCREEN != 0)
 			hideOverlay()
 	}
 
